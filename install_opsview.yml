@@ -1,6 +1,6 @@
 ---
 - name: Auto-Deploy Opsview Agent
-  hosts: OpsView-Inventory-MQ
+  hosts: all
   become: false
 
   tasks:
