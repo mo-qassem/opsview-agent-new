@@ -1,0 +1,11 @@
+---
+- name: Download Opsview Agent installer
+  win_get_url:
+    url: "https://opsview-agents.s3.amazonaws.com/Windows/Opsview_Windows_Agent_x64_09-03-23-1652.msi"
+    dest: C:\temp\Opsview_Windows_Agent_x64_09-03-23-1652.msi
+
+- name: Install Opsview Agent
+  win_package:
+    path: C:\temp\Opsview_Windows_Agent_x64_09-03-23-1652.msi
+    arguments: "/quiet /qn /norestart"
+    state: present

@@ -1,0 +1,54 @@
+---
+- name: Install Opsview dependencies
+  apt:
+    name:
+      - vnstat
+    state: present
+
+- name: Check If Opsview already downloaded or not
+  stat:
+    path: /root/opsview-agent_6.8.0.202212070943-1focal1_amd64.deb
+  register: file_exist
+
+- name: Download the package if it is not exist
+  get_url:
+    url: https://opsview-repository.s3-eu-west-1.amazonaws.com/opsview-agents/ubuntu20/opsview-agent_6.8.0.202212070943-1focal1_amd64.deb
+    dest: /root/opsview-agent_6.8.0.202212070943-1focal1_amd64.deb
+  when: not file_exist.stat.exists
+
+- name: Install Opsview DEB package
+  command: dpkg -i /root/opsview-agent_6.8.0.202212070943-1focal1_amd64.deb
+  args:
+    creates: /opt/opsview/agent
+
+- name: Start Opsview Agent
+  service:
+    name: opsview-agent
+    state: started
+    enabled: yes
+
+- name: Copy the NRPE configuration file
+  copy:
+    src: ../../../nrpe.cfg
+    dest: /opt/opsview/agent/etc/nrpe.cfg
+
+- name: Copy the check_bandwidth_quota file
+  copy:
+    src: ../../../check_bandwidth_quota.sh
+    dest: /opt/opsview/agent/plugins
+
+- name: Change ownership of a file
+  file:
+    path: /opt/opsview/agent/plugins/check_bandwidth_quota.sh
+    group: opsview
+    mode: "0750"
+
+- name: Ensure the service is restarted
+  systemd:
+    name: vnstat
+    state: restarted
+
+- name: Ensure the service is restarted
+  systemd:
+    name: opsview-agent
+    state: restarted

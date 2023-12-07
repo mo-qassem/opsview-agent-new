@@ -1,0 +1,15 @@
+---
+- name: Auto-Deploy Opsview Agent
+  hosts: vms
+  become: false
+
+  tasks:
+    - name: Identify Opsview Agent role for Windows
+      include_role:
+        name: "opsview_windows"
+      when: ansible_system == 'Windows'
+
+    - name: Identify Opsview Agent role for Linux
+      include_role:
+        name: "opsview_{{ ansible_facts['distribution'] | lower }}"
+      when: ansible_system != 'Windows'
