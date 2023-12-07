@@ -1,6 +1,6 @@
 ---
 - name: Auto-Deploy Opsview Agent
-  hosts: vms
+  #hosts: vms
   become: false
 
   tasks:
