@@ -44,7 +44,7 @@
     enabled: yes
 
 - name: Allow specific IP through firewall
-  firewalld:
+  ansible.posix.firewalld:
     rich_rule: 'rule family="ipv4" source address="94.75.230.111/32" accept'
     state: enabled
     permanent: yes
