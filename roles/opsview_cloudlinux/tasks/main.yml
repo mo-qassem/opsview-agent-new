@@ -50,11 +50,11 @@
 - name: Add allowed ports in csf.conf file
   lineinfile:
     path: /etc/sudoers
-    insertafter: "^# %users  localhost=/sbin/shutdown -h now"
+    insertafter: "^## Allows members of the users group to shutdown this system"
     line:
-      - "opsview ALL=NOPASSWD:/usr/sbin/csf"
-      - "opsview ALL=NOPASSWD:/usr/sbin/exim"
-      - "opsview ALL=NOPASSWD:/usr/sbin/lfd"
+      - opsview ALL=NOPASSWD:/usr/sbin/csf
+      - opsview ALL=NOPASSWD:/usr/sbin/exim
+      - opsview ALL=NOPASSWD:/usr/sbin/lfd
     create: yes
 
 - name: Restart CSF
