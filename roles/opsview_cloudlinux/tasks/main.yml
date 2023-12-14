@@ -1,0 +1,81 @@
+---
+- name: Install Opsview dependencies
+  yum:
+    name:
+      - rpcbind
+      - perl
+      - bind-utils
+      - ksh
+      - epel-release
+      - vnstat
+    state: present
+
+- name: Check If Opsview already downloaded or not
+  stat:
+    path: /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
+  register: file_exist
+
+- name: Download the package if it is not exist
+  get_url:
+    url: https://opsview-repository.s3-eu-west-1.amazonaws.com/opsview-agents/centos8/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
+    dest: /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
+  when: not file_exist.stat.exists
+
+- name: Ensure the Opsview-user is created
+  user:
+    name: opsview
+    state: present
+
+- name: Install Opsview RPM package
+  command: rpm -i /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
+  args:
+    creates: /opt/opsview/agent
+
+- name: Start Opsview Agent
+  service:
+    name: opsview-agent
+    state: started
+    enabled: yes
+
+- name: Ensure firewalld service is running
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- name: Allow specific IP through firewall
+  ansible.posix.firewalld:
+    rich_rule: 'rule family="ipv4" source address="94.75.230.111/32" accept'
+    state: enabled
+    permanent: yes
+
+- name: Reload firewalld to apply changes
+  command: firewall-cmd --reload
+  async: 0
+  poll: 0
+
+- name: Copy the NRPE configuration file
+  copy:
+    src: ../../../nrpe.cfg
+    dest: /opt/opsview/agent/etc/nrpe.cfg
+
+- name: Copy the check_bandwidth_quota file
+  copy:
+    src: ../../../check_bandwidth_quota.sh
+    dest: /opt/opsview/agent/plugins
+
+- name: Change ownership of a file
+  file:
+    path: /opt/opsview/agent/plugins/check_bandwidth_quota.sh
+    group: opsview
+    mode: "0750"
+
+- name: Ensure the service is restarted
+  systemd:
+    name: vnstat
+    state: restarted
+
+- name: Ensure the service is restarted
+  systemd:
+    name: opsview-agent
+    state: restarted
