@@ -77,12 +77,11 @@
 
 - name: Change ownership of files
   file:
-    path: "{{ item.path }}"
-    group: opsview
-    mode: "0750"
-    with_items:
+    path:
       - /opt/opsview/agent/plugins/check_bandwidth_quota.sh
       - /opt/opsview/agent/plugins/check_csf
+    group: opsview
+    mode: "0750"
 
 - name: Ensure the service is restarted
   systemd:
