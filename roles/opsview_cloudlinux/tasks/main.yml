@@ -77,7 +77,7 @@
     dest: /opt/opsview/agent/plugins
 
 - name: Change ownership of files
-  file:
+  ansible.builtin.file:
     path: "{{ items }}"
     group: opsview
     mode: "0750"
