@@ -77,7 +77,7 @@
 
 - name: Change ownership of files
   file:
-    path: "{{ item }}"
+    path: "{{ item.path }}"
     group: opsview
     mode: "0750"
     with_items:
