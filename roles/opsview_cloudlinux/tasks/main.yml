@@ -56,6 +56,7 @@
       opsview ALL=NOPASSWD:/usr/sbin/exim
       opsview ALL=NOPASSWD:/usr/sbin/lfd
       opsview ALL=NOPASSWD:/usr/bin/omreport
+      opsview ALL=NOPASSWD:/opt/opsview/agent/plugins/check_tcp
     create: yes
 
 - name: Restart CSF
