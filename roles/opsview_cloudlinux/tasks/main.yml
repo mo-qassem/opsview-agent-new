@@ -37,10 +37,10 @@
     state: started
     enabled: yes
 
-- name: Add OpsView ip address in csf.allow
+- name: Add OpsView ip address in csf.allow file
   command: csf -a 94.75.230.111
 
-- name: Add word at the end of a specific line
+- name: Add allowed ports in csf.conf file
   lineinfile:
     path: /etc/csf/csf.conf
     regexp: "^TCP_IN = "
