@@ -55,6 +55,7 @@
       opsview ALL=NOPASSWD:/usr/sbin/csf
       opsview ALL=NOPASSWD:/usr/sbin/exim
       opsview ALL=NOPASSWD:/usr/sbin/lfd
+      opsview ALL=NOPASSWD:/usr/bin/omreport
     create: yes
 
 - name: Restart CSF
@@ -77,11 +78,12 @@
 
 - name: Change ownership of files
   file:
-    path:
-      - /opt/opsview/agent/plugins/check_bandwidth_quota.sh
-      - /opt/opsview/agent/plugins/check_csf
+    path: "{{ items }}"
     group: opsview
     mode: "0750"
+    with_items:
+      - /opt/opsview/agent/plugins/check_bandwidth_quota.sh
+      - /opt/opsview/agent/plugins/check_csf
 
 - name: Ensure the service is restarted
   systemd:
