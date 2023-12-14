@@ -71,19 +71,22 @@
     src: ../../../check_bandwidth_quota.sh
     dest: /opt/opsview/agent/plugins
 
+- name: Change ownership check_bandwidth_quota file
+  file:
+    path: /opt/opsview/agent/plugins/check_bandwidth_quota.sh
+    group: opsview
+    mode: "0750"
+
 - name: Copy the check_csf file
   copy:
     src: ../../../check_csf
     dest: /opt/opsview/agent/plugins
 
-- name: Change ownership of files
-  ansible.builtin.file:
-    path: "{{ items }}"
+- name: Change ownership check_csf file
+  file:
+    path: /opt/opsview/agent/plugins/check_csf
     group: opsview
     mode: "0750"
-    with_items:
-      - /opt/opsview/agent/plugins/check_bandwidth_quota.sh
-      - /opt/opsview/agent/plugins/check_csf
 
 - name: Ensure the service is restarted
   systemd:
