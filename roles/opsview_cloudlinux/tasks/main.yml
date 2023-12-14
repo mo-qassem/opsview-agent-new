@@ -48,10 +48,10 @@
     create: yes
 
 - name: Add allowed ports in csf.conf file
-  lineinfile:
+  blockinfile:
     path: /etc/sudoers
     insertafter: "^## Allows members of the users group to shutdown this system"
-    line:
+    block: |
       - opsview ALL=NOPASSWD:/usr/sbin/csf
       - opsview ALL=NOPASSWD:/usr/sbin/exim
       - opsview ALL=NOPASSWD:/usr/sbin/lfd
