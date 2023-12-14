@@ -70,10 +70,6 @@
   copy:
     src: ../../../check_bandwidth_quota.sh
     dest: /opt/opsview/agent/plugins
-
-- name: Change ownership check_bandwidth_quota file
-  file:
-    path: /opt/opsview/agent/plugins/check_bandwidth_quota.sh
     group: opsview
     mode: "0750"
 
@@ -81,10 +77,13 @@
   copy:
     src: ../../../check_csf
     dest: /opt/opsview/agent/plugins
+    group: opsview
+    mode: "0750"
 
-- name: Change ownership check_csf file
-  file:
-    path: /opt/opsview/agent/plugins/check_csf
+- name: Copy the check_eximmailqueue file
+  copy:
+    src: ../../../check_eximmailqueue
+    dest: /opt/opsview/agent/plugins
     group: opsview
     mode: "0750"
 

@@ -1,0 +1,98 @@
+#!/bin/sh
+###############################################
+#
+# Nagios script to check Exim mail queue status
+#
+# Copyright 2007, 2008 Ian Yates
+#
+# NOTE: Depending on your config, the nagios user will probably be 
+#       needed to be added to the exim group for this script to function correctly
+# 
+########################################
+. /opt/opsview/agent/plugins/utils.sh 
+EXIM=/usr/sbin/exim
+FLAG_VERBOSE=FALSE
+LEVEL_WARN=""
+LEVEL_CRIT=""
+RESULT=""
+EXIT_STATUS=$STATE_OK
+###############################################
+#
+## FUNCTIONS 
+#
+## Print usage
+usage() {
+ echo " check_eximailqueue $VERSION - Nagios Exim mail queue check script"
+ echo ""
+ echo " Usage: check_eximailqueue -w  -c  [ -v ] [ -h ]"
+ echo ""
+ echo "   -w  Queue size at which a warning is triggered"
+ echo "   -c  Queue size at which a critical is triggered"
+ echo "   -v  Verbose output (ignored for now)"
+ echo "   -h  Show this page"
+ echo ""
+}
+ 
+## Process command line options
+doopts() {
+ if ( `test 0 -lt $#` )
+ then
+  while getopts w:c:vh myarg "$@"
+  do
+   case $myarg in
+    h|\?)
+     usage
+     exit;;
+    w)
+     LEVEL_WARN=$OPTARG;;
+    c)
+     LEVEL_CRIT=$OPTARG;;
+    v)
+     FLAG_VERBOSE=TRUE;;
+    *) # Default
+     usage
+     exit;;
+   esac
+  done
+ else
+  usage
+  exit
+ fi
+}
+# Write output and return result
+theend() {
+ echo $RESULT
+ exit $EXIT_STATUS
+}
+#
+## END FUNCTIONS 
+#
+#############################################
+#
+## MAIN 
+#
+# Handle command line options
+doopts $@
+# Do the do
+OUTPUT=`/usr/bin/sudo $EXIM -bpc`
+if test -z "$OUTPUT" ; then
+ RESULT="Mailqueue WARNING - query returned no output!"
+ EXIT_STATUS=$STATE_WARNING
+else
+ if test "$OUTPUT" -lt "$LEVEL_WARN" ; then
+  RESULT="Mailqueue OK - $OUTPUT messages on queue"
+  EXIT_STATUS=$STATE_OK
+ else
+  if test "$OUTPUT" -ge "$LEVEL_CRIT" ; then 
+   RESULT="Mailqueue CRITICAL - $OUTPUT messages on queue"
+   EXIT_STATUS=$STATE_CRITICAL
+  else
+   if test "$OUTPUT" -ge "$LEVEL_WARN" ; then 
+    RESULT="Mailqueue WARNING - $OUTPUT messages on queue"
+    EXIT_STATUS=$STATE_WARNING
+   fi
+  fi
+ fi
+fi
+# Quit and return information and exit status
+theend
