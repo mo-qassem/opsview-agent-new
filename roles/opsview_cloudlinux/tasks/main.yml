@@ -57,6 +57,7 @@
       opsview ALL=NOPASSWD:/usr/sbin/lfd
       opsview ALL=NOPASSWD:/usr/bin/omreport
       opsview ALL=NOPASSWD:/opt/opsview/agent/plugins/check_tcp
+      opsview ALL=NOPASSWD:/opt/opsview/agent/plugins/check_disk
     create: yes
 
 - name: Restart CSF
