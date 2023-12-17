@@ -45,8 +45,7 @@
 
 - name: Display the service status
   debug:
-    var:   register: firewalld_status
-
+    var: firewalld_status
 
 - name: Ensure firewalld service is running
   service:
