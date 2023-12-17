@@ -38,9 +38,10 @@
     enabled: yes
 
 - name: Get status of the service
-  command: systemctl is-enabled firewalld
+  systemd:
+    name: firewalld
+    state: status
   register: firewalld_status
-  changed_when: false
 
 - name: Ensure firewalld service is running
   service:
