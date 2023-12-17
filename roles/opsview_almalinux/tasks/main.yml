@@ -38,7 +38,7 @@
     enabled: yes
 
 - name: Get status of the service
-  ansible.builtin.systemd_service:
+  systemd_service:
     name: firewalld
     state: status
   register: firewalld_status
