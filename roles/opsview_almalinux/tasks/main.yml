@@ -38,9 +38,11 @@
     enabled: yes
 
 - name: Get status of the service
-  shell: systemctl is-enabled firewalld || true
-  register: firewalld_status
-  ignore_errors: yes
+  service_facts:
+
+- name: Get facts
+  debug:
+    msg: "{{ ansible_facts.services['firewalld'].status }}"
 
 - name: Ensure firewalld service is running
   service:
