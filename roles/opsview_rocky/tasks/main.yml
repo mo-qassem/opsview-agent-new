@@ -120,7 +120,12 @@
     group: opsview
     mode: "0750"
 
-- name: Ensure the service is restarted
+- name: Ensure the vnstat service is restarted
+  systemd:
+    name: vnstat
+    state: restarted
+
+- name: Ensure the opsview service is restarted
   systemd:
     name: opsview-agent
     state: restarted
