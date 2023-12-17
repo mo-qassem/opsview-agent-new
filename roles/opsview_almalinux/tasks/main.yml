@@ -37,7 +37,7 @@
     state: started
     enabled: yes
 
-- name: Get status of the service
+- name: Get status of the firewalld service
   service_facts:
 
 - name: Show the status of firewalld service
