@@ -1,6 +1,7 @@
 ---
 - name: Install Opsview dependencies
   become: yes
+  become_user: exadmn
   yum:
     name:
       - rpcbind
@@ -13,12 +14,14 @@
 
 - name: Check If Opsview already downloaded or not
   become: yes
+  become_user: exadmn
   stat:
     path: /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
   register: file_exist
 
 - name: Download the package if it is not exist
   become: yes
+  become_user: exadmn
   get_url:
     url: https://opsview-repository.s3-eu-west-1.amazonaws.com/opsview-agents/centos8/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
     dest: /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
@@ -26,6 +29,7 @@
 
 - name: Ensure the Opsview-user is created
   become: yes
+  become_user: exadmn
   user:
     name: opsview
     state: present
