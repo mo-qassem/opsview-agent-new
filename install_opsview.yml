@@ -12,7 +12,7 @@
 
     - name: Identify Opsview Agent role for Linux
       include_role:
+      become: true
+      become_user: exadmn
         name: "opsview_{{ ansible_facts['distribution'] | lower }}"
-        become: true
-        become_user: exadmn
       when: ansible_system != 'Windows'
