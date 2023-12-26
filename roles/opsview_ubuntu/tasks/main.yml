@@ -1,7 +1,7 @@
 ---
 - name: Install Opsview dependencies
   become: yes
-  become_user: exadmn
+  become_user: root
   apt:
     name:
       - vnstat
@@ -9,14 +9,14 @@
 
 - name: Check If Opsview already downloaded or not
   become: yes
-  become_user: exadmn
+  become_user: root
   stat:
     path: /root/opsview-agent_6.8.0.202212070943-1focal1_amd64.deb
   register: file_exist
 
 - name: Download the package if it is not exist
   become: yes
-  become_user: exadmn
+  become_user: root
   get_url:
     url: https://opsview-repository.s3-eu-west-1.amazonaws.com/opsview-agents/ubuntu20/opsview-agent_6.8.0.202212070943-1focal1_amd64.deb
     dest: /root/opsview-agent_6.8.0.202212070943-1focal1_amd64.deb
@@ -24,14 +24,14 @@
 
 - name: Install Opsview DEB package
   become: yes
-  become_user: exadmn
+  become_user: root
   command: dpkg -i /root/opsview-agent_6.8.0.202212070943-1focal1_amd64.deb
   args:
     creates: /opt/opsview/agent
 
 - name: Start Opsview Agent
   become: yes
-  become_user: exadmn
+  become_user: root
   service:
     name: opsview-agent
     state: started
@@ -39,14 +39,14 @@
 
 - name: Copy the NRPE configuration file
   become: yes
-  become_user: exadmn
+  become_user: root
   copy:
     src: ../../../nrpe.cfg
     dest: /opt/opsview/agent/etc/nrpe.cfg
 
 - name: Copy the check_bandwidth_quota file
   become: yes
-  become_user: exadmn
+  become_user: root
   copy:
     src: ../../../check_bandwidth_quota.sh
     dest: /opt/opsview/agent/plugins
@@ -55,7 +55,7 @@
 
 - name: Copy the check_csf file
   become: yes
-  become_user: exadmn
+  become_user: root
   copy:
     src: ../../../check_csf
     dest: /opt/opsview/agent/plugins
@@ -64,7 +64,7 @@
 
 - name: Copy the check_eximmailqueue file
   become: yes
-  become_user: exadmn
+  become_user: root
   copy:
     src: ../../../check_eximmailqueue
     dest: /opt/opsview/agent/plugins
@@ -73,14 +73,14 @@
 
 - name: Ensure the service is restarted
   become: yes
-  become_user: exadmn
+  become_user: root
   systemd:
     name: vnstat
     state: restarted
 
 - name: Ensure the service is restarted
   become: yes
-  become_user: exadmn
+  become_user: root
   systemd:
     name: opsview-agent
     state: restarted
