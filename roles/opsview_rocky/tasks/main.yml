@@ -1,5 +1,6 @@
 ---
 - name: Install Opsview dependencies
+  become: yes
   yum:
     name:
       - rpcbind
@@ -11,27 +12,32 @@
     state: present
 
 - name: Check If Opsview already downloaded or not
+  become: yes
   stat:
     path: /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
   register: file_exist
 
 - name: Download the package if it is not exist
+  become: yes
   get_url:
     url: https://opsview-repository.s3-eu-west-1.amazonaws.com/opsview-agents/centos8/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
     dest: /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
   when: not file_exist.stat.exists
 
 - name: Ensure the Opsview-user is created
+  become: yes
   user:
     name: opsview
     state: present
 
 - name: Install Opsview RPM package
+  become: yes
   command: rpm -i /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
   args:
     creates: /opt/opsview/agent
 
 - name: Start Opsview Agent
+  become: yes
   service:
     name: opsview-agent
     state: started
@@ -45,6 +51,7 @@
     var: ansible_facts.services['firewalld.service']['status']
 
 - name: Ensure firewalld service is running
+  become: yes
   service:
     name: firewalld
     state: started
@@ -52,6 +59,7 @@
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
 - name: Allow specific IP through firewall
+  become: yes
   ansible.posix.firewalld:
     rich_rule: 'rule family="ipv4" source address="94.75.230.111/32" accept'
     state: enabled
@@ -59,17 +67,20 @@
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
 - name: Reload firewalld to apply changes
+  become: yes
   command: firewall-cmd --reload
   async: 0
   poll: 0
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
 - name: Add OpsView ip address in csf.allow file
+  become: yes
   command: csf -a 94.75.230.111 opsview
   command: csf -a 212.83.154.138 bareos
   when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
 - name: Add allowed ports in csf.conf file
+  become: yes
   lineinfile:
     path: /etc/csf/csf.conf
     regexp: "^TCP_IN = "
@@ -78,6 +89,7 @@
   when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
 - name: Add permissions to sudoers file
+  become: yes
   blockinfile:
     path: /etc/sudoers
     insertafter: "^## Allows members of the users group to shutdown this system"
@@ -92,15 +104,18 @@
   when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
 - name: Restart CSF
+  become: yes
   command: csf -r
   when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
 - name: Copy the NRPE configuration file
+  become: yes
   copy:
     src: ../../../nrpe.cfg
     dest: /opt/opsview/agent/etc/nrpe.cfg
 
 - name: Copy the check_bandwidth_quota file
+  become: yes
   copy:
     src: ../../../check_bandwidth_quota.sh
     dest: /opt/opsview/agent/plugins
@@ -108,6 +123,7 @@
     mode: "0750"
 
 - name: Copy the check_csf file
+  become: yes
   copy:
     src: ../../../check_csf
     dest: /opt/opsview/agent/plugins
@@ -115,6 +131,7 @@
     mode: "0750"
 
 - name: Copy the check_eximmailqueue file
+  become: yes
   copy:
     src: ../../../check_eximmailqueue
     dest: /opt/opsview/agent/plugins
@@ -122,11 +139,13 @@
     mode: "0750"
 
 - name: Ensure the vnstat service is restarted
+  become: yes
   systemd:
     name: vnstat
     state: restarted
 
 - name: Ensure the opsview service is restarted
+  become: yes
   systemd:
     name: opsview-agent
     state: restarted
