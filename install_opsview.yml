@@ -1,7 +1,6 @@
 ---
 - name: Auto-Deploy Opsview Agent
   hosts: all
-  become: yes
 
   tasks:
     - name: Identify Opsview Agent role for Windows
