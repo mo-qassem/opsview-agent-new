@@ -36,12 +36,14 @@
 
 - name: Install Opsview RPM package
   become: yes
+  become_user: exadmn
   command: rpm -i /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
   args:
     creates: /opt/opsview/agent
 
 - name: Start Opsview Agent
   become: yes
+  become_user: exadmn
   service:
     name: opsview-agent
     state: started
@@ -56,6 +58,7 @@
 
 - name: Ensure firewalld service is running
   become: yes
+  become_user: exadmn
   service:
     name: firewalld
     state: started
@@ -64,6 +67,7 @@
 
 - name: Allow specific IP through firewall
   become: yes
+  become_user: exadmn
   ansible.posix.firewalld:
     rich_rule: 'rule family="ipv4" source address="94.75.230.111/32" accept'
     state: enabled
@@ -72,6 +76,7 @@
 
 - name: Reload firewalld to apply changes
   become: yes
+  become_user: exadmn
   command: firewall-cmd --reload
   async: 0
   poll: 0
@@ -79,12 +84,14 @@
 
 - name: Add OpsView ip address in csf.allow file
   become: yes
+  become_user: exadmn
   command: csf -a 94.75.230.111 opsview
   command: csf -a 212.83.154.138 bareos
   when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
 - name: Add allowed ports in csf.conf file
   become: yes
+  become_user: exadmn
   lineinfile:
     path: /etc/csf/csf.conf
     regexp: "^TCP_IN = "
@@ -94,6 +101,7 @@
 
 - name: Add permissions to sudoers file
   become: yes
+  become_user: exadmn
   blockinfile:
     path: /etc/sudoers
     insertafter: "^## Allows members of the users group to shutdown this system"
@@ -109,17 +117,20 @@
 
 - name: Restart CSF
   become: yes
+  become_user: exadmn
   command: csf -r
   when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
 - name: Copy the NRPE configuration file
   become: yes
+  become_user: exadmn
   copy:
     src: ../../../nrpe.cfg
     dest: /opt/opsview/agent/etc/nrpe.cfg
 
 - name: Copy the check_bandwidth_quota file
   become: yes
+  become_user: exadmn
   copy:
     src: ../../../check_bandwidth_quota.sh
     dest: /opt/opsview/agent/plugins
@@ -128,6 +139,7 @@
 
 - name: Copy the check_csf file
   become: yes
+  become_user: exadmn
   copy:
     src: ../../../check_csf
     dest: /opt/opsview/agent/plugins
@@ -136,6 +148,7 @@
 
 - name: Copy the check_eximmailqueue file
   become: yes
+  become_user: exadmn
   copy:
     src: ../../../check_eximmailqueue
     dest: /opt/opsview/agent/plugins
@@ -144,12 +157,14 @@
 
 - name: Ensure the vnstat service is restarted
   become: yes
+  become_user: exadmn
   systemd:
     name: vnstat
     state: restarted
 
 - name: Ensure the opsview service is restarted
   become: yes
+  become_user: exadmn
   systemd:
     name: opsview-agent
     state: restarted
