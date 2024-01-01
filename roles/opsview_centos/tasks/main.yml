@@ -49,7 +49,7 @@
     state: started
     enabled: yes
 
-- name: Get status of the firewalld service
+- name: Get the status of the firewalld service
   service_facts:
 
 - name: Show the status of firewalld service
@@ -65,7 +65,7 @@
     enabled: yes
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
-- name: Allow specific IP through firewall
+- name: Allow Opsview IP through firewalld
   become: yes
   become_user: root
   ansible.posix.firewalld:
@@ -74,7 +74,16 @@
     permanent: yes
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
-- name: Reload firewalld to apply changes
+- name: Allow Bareos IP through firewalld
+  become: yes
+  become_user: root
+  ansible.posix.firewalld:
+    rich_rule: 'rule family="ipv4" source address="212.83.154.138/32" accept'
+    state: enabled
+    permanent: yes
+  when: ansible_facts.services['firewalld.service']['status'] != 'masked'
+
+- name: Reload firewalld-service to apply the changes
   become: yes
   become_user: root
   command: firewall-cmd --reload
@@ -82,11 +91,16 @@
   poll: 0
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
-- name: Add OpsView ip address in csf.allow file
+- name: Add Opsview Ip address in csf.allow file
   become: yes
   become_user: root
-  command: csf -a 94.75.230.111 opsview
-  command: csf -a 212.83.154.138 bareos
+  command: csf -a 94.75.230.111 opsview-server
+  when: ansible_facts.services['firewalld.service']['status'] == 'masked'
+
+- name: Add Bareos Ip address in csf.allow file
+  become: yes
+  become_user: root
+  command: csf -a 212.83.154.138 bareos-backup-service
   when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
 - name: Add allowed ports in csf.conf file
@@ -99,7 +113,13 @@
     create: yes
   when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
-- name: Add permissions to sudoers file
+- name: Restart CSF
+  become: yes
+  become_user: root
+  command: csf -r
+  when: ansible_facts.services['firewalld.service']['status'] == 'masked'
+
+- name: Add special permissions to sudoers file
   become: yes
   become_user: root
   blockinfile:
@@ -113,13 +133,6 @@
       opsview ALL=NOPASSWD:/opt/opsview/agent/plugins/check_tcp
       opsview ALL=NOPASSWD:/opt/opsview/agent/plugins/check_disk
     create: yes
-  when: ansible_facts.services['firewalld.service']['status'] == 'masked'
-
-- name: Restart CSF
-  become: yes
-  become_user: root
-  command: csf -r
-  when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
 - name: Copy the NRPE configuration file
   become: yes
@@ -132,7 +145,7 @@
   become: yes
   become_user: root
   copy:
-    src: ../../../check_bandwidth_quota.sh
+    src: ../../../plugins/check_bandwidth_quota.sh
     dest: /opt/opsview/agent/plugins
     group: opsview
     mode: "0750"
@@ -141,7 +154,7 @@
   become: yes
   become_user: root
   copy:
-    src: ../../../check_csf
+    src: ../../../plugins/check_csf
     dest: /opt/opsview/agent/plugins
     group: opsview
     mode: "0750"
@@ -150,7 +163,7 @@
   become: yes
   become_user: root
   copy:
-    src: ../../../check_eximmailqueue
+    src: ../../../plugins/check_eximmailqueue
     dest: /opt/opsview/agent/plugins
     group: opsview
     mode: "0750"
