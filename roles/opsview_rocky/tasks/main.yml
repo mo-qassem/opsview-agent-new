@@ -78,7 +78,7 @@
   become: yes
   become_user: root
   ansible.posix.firewalld:
-    rich_rule: 'rule family="ipv4" source address="212.83.154.138/32" port port="9101,9102,9103" protocol="tcp" accept'
+    rich_rule: 'rule family="ipv4" source address="212.83.154.138/32" port port="9101-9103" protocol="tcp" accept'
     state: enabled
     permanent: yes
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
