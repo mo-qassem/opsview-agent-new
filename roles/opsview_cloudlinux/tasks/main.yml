@@ -8,11 +8,11 @@
   become_user: root
   yum:
     name:
+      - epel-release
       - rpcbind
       - perl
       - bind-utils
       - ksh
-      - epel-release
       - vnstat
     state: present
 
