@@ -1,4 +1,8 @@
 ---
+- name: Update Package Cache
+  yum:
+    update_cache: yes
+
 - name: Install Opsview dependencies
   become: yes
   become_user: root
