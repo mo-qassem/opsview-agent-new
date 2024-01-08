@@ -8,6 +8,7 @@
   become_user: root
   apt:
     name:
+      - wget
       - vnstat
     state: present
 

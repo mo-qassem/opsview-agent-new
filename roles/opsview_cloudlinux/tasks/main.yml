@@ -9,6 +9,7 @@
   yum:
     name:
       - epel-release
+      - wget
       - rpcbind
       - perl
       - bind-utils
