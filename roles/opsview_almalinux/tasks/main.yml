@@ -4,7 +4,7 @@
     update_cache: yes
 
 - name: Install Opsview dependencies
-  become: true
+  become: yes
   become_user: root
   yum:
     name:
