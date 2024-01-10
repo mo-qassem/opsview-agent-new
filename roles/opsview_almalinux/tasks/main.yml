@@ -5,7 +5,7 @@
 
 - name: Install Opsview dependencies
   become: true
-  become_user: exadmn
+  become_user: root
   yum:
     name:
       - epel-release
