@@ -2,6 +2,7 @@
 - name: Auto-Deploy Opsview Agent
   hosts: all
   become: true
+  become_user: exadmn
   vars:
     ansible_port: "{{ survey_ansible_port }}"
   tasks:
