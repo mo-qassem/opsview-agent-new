@@ -1,10 +1,6 @@
 ---
-- name: Update Package Cache
-  yum:
-    update_cache: yes
-
 - name: Install Opsview dependencies
-  become: yes
+  become: true
   become_user: root
   yum:
     name:
@@ -18,7 +14,7 @@
     state: present
 
 - name: Check If Opsview already downloaded or not
-  become: yes
+  become: true
   become_user: root
   stat:
     path: /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
@@ -74,13 +70,15 @@
   become: yes
   become_user: root
   ansible.posix.firewalld:
-    rich_rule: 'rule family="ipv4" source address="94.75.230.111/32" accept'
+    rich_rule:
+      - 'rule family="ipv4" source address="94.75.230.111/32" accept'
+      - 'rule family="ipv4" source address="212.83.154.138/32" accept'
     state: enabled
     permanent: yes
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
 - name: Allow Bareos IP & PORTS through firewalld
-  become: yes
+  become: true
   become_user: root
   ansible.posix.firewalld:
     rich_rule: 'rule family="ipv4" source address="212.83.154.138/32" port port="9101-9103" protocol="tcp" accept'
