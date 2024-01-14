@@ -1,6 +1,6 @@
 ---
 - name: Install Opsview dependencies
-  become: true
+  become: yes
   become_user: root
   yum:
     name:
@@ -14,7 +14,7 @@
     state: present
 
 - name: Check If Opsview already downloaded or not
-  become: true
+  become: yes
   become_user: root
   stat:
     path: /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
