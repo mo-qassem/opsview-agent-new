@@ -18,7 +18,8 @@
         dest: "/tmp/"
         remote_src: yes
 
-    - name: Change to CSF directory
+    - name: Change to CSF directory and install CSF
+      become: yes
       command:
         cmd: "./install.sh"
         chdir: "/tmp/csf"
