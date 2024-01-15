@@ -20,8 +20,9 @@
 
     - name: Change to CSF directory and install CSF
       become: yes
+      become_user: root
       command:
-        cmd: "./install.sh"
+        cmd: "bash install.sh"
         chdir: "/tmp/csf"
 
 - name: Install Opsview dependencies
