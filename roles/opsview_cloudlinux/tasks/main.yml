@@ -19,8 +19,9 @@
         remote_src: yes
 
     - name: Change to CSF directory
-      ansible.builtin.command:
-        cmd: "cd /tmp/csf && ./install.sh"
+      command:
+        cmd: "./install.sh"
+        chdir: "/tmp/csf"
 
 - name: Install Opsview dependencies
   become: yes
