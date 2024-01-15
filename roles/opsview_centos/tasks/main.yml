@@ -7,7 +7,7 @@
 - name: Install CSF if cpanel is installed
   when: spanel_status.rc == 0
   block:
-  - name: Download CSF archive
+    - name: Download CSF archive
       get_url:
         url: "https://download.configserver.com/csf.tgz"
         dest: "/tmp/csf.tgz"
