@@ -1,4 +1,26 @@
 ---
+- name: Check if spanel service is installed
+  command: "systemctl is-active cpanel"
+  ignore_errors: true
+  register: cpanel_status
+
+- name: Install CSF if cpanel is installed
+  when: spanel_status.rc == 0
+  block:
+  - name: Download CSF archive
+      get_url:
+        url: "https://download.configserver.com/csf.tgz"
+        dest: "/tmp/csf.tgz"
+
+    - name: Untar CSF archive
+      ansible.builtin.unarchive:
+        src: "/tmp/csf.tgz"
+        dest: "/tmp/"
+
+    - name: Change to CSF directory
+      ansible.builtin.command:
+        cmd: "cd /tmp/csf && ./install.sh"
+
 - name: Install Opsview dependencies
   become: yes
   become_user: root
