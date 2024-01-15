@@ -1,11 +1,11 @@
 ---
-- name: Check if spanel service is installed
-  command: "systemctl is-active cpanel"
+- name: Check if cpanel service is installed
+  command: "systemctl is-active cpanel.service"
   ignore_errors: true
   register: cpanel_status
 
 - name: Install CSF if cpanel is installed
-  when: spanel_status.rc == 0
+  when: cpanel_status.rc == 0
   block:
     - name: Download CSF archive
       get_url:
