@@ -16,6 +16,7 @@
       ansible.builtin.unarchive:
         src: "/tmp/csf.tgz"
         dest: "/tmp/"
+        remote_src: yes
 
     - name: Change to CSF directory
       ansible.builtin.command:
