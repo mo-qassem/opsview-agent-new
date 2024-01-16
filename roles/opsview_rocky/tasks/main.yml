@@ -9,6 +9,13 @@
   yum:
     name:
       - epel-release
+    state: present
+
+- name: Install Opsview dependencies
+  become: yes
+  become_user: root
+  yum:
+    name:
       - wget
       - rpcbind
       - perl
