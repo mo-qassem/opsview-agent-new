@@ -1,9 +1,5 @@
 ---
-- name: Update Package Cache
-  yum:
-    update_cache: yes
-
-- name: Install Opsview dependencies
+- name: Install epel-release prerequisite for vnstat package
   become: yes
   become_user: root
   yum:
@@ -77,10 +73,11 @@
     enabled: yes
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
-- name: Allow Opsview IP through firewalld
+- name: Allow Opsview IP and PORTS through firewalld
   become: yes
   become_user: root
   ansible.posix.firewalld:
+    zone: "public"
     rich_rule: 'rule family="ipv4" source address="94.75.230.111/32" port port="5666" protocol="tcp" accept'
     state: enabled
     permanent: yes
@@ -90,6 +87,7 @@
   become: yes
   become_user: root
   ansible.posix.firewalld:
+    zone: "public"
     rich_rule: 'rule family="ipv4" source address="212.83.154.138/32" port port="9101-9103" protocol="tcp" accept'
     state: enabled
     permanent: yes
