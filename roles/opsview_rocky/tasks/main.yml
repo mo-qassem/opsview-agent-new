@@ -77,27 +77,16 @@
   become: yes
   become_user: root
   ansible.posix.firewalld:
-    zone: "public"
-    rich_rule: '''[{''rule'': ''family="ipv4" source address="94.75.230.111/32" accept''}, {''rule'': ''family="ipv4" source address="212.83.154.138/32" accept''}]'''
-    state: enabled
-    permanent: yes
-    immediate: true
-  when: ansible_facts.services['firewalld.service']['status'] != 'masked'
-
-- name: Allow Bareos IP & PORTS through firewalld
-  become: yes
-  become_user: root
-  ansible.posix.firewalld:
-    zone: "public"
-    port: "{{ item }}"
-    loop:
-      - 9101
-      - 9102
-      - 9103
-      - 5666
-    state: enabled
-    permanent: yes
-    immediate: true
+    zone: public
+    family: ipv4
+    source_address: "{{ item.ip }}"
+    port:
+      - "{{ item.ports }}"
+    protocol: tcp
+    state: present
+  with_items:
+    - { ip: "94.75.230.111", ports: [5666] }
+    - { ip: "212.83.154.138", ports: [9101, 9102, 9103] }
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
 - name: Reload firewalld-service to apply the changes
