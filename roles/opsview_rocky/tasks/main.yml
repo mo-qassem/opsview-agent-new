@@ -76,14 +76,13 @@
 - name: Allow Opsview IP and PORTS through firewalld
   become: yes
   become_user: root
-  firewalld_rich_rule:
+  ansible.posix.firewalld:
     zone: public
     family: ipv4
-    source_address: "{{ item.ip }}"
-    port:
-      - "{{ item.ports }}"
-    protocol: tcp
-    state: present
+    service: "{{ item.ports | map('string') | join('/') }}"
+    source: "{{ item.ip }}"
+    state: enabled
+    permanent: yes
   with_items:
     - { ip: "94.75.230.111", ports: [5666] }
     - { ip: "212.83.154.138", ports: [9101, 9102, 9103] }
