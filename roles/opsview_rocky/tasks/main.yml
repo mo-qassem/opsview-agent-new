@@ -76,9 +76,11 @@
 - name: Allow Opsview IP and PORTS through firewalld
   become: yes
   become_user: root
-  firewalld:
+  ansible.posix.firewalld:
     zone: "public"
-    rich_rule: 'rule family="ipv4" source address="94.75.230.111/32" port port="5666" protocol="tcp" accept'
+    rich_rule:
+      - rule family="ipv4" source address="94.75.230.111/32" accept
+      - rule family="ipv4" source address="212.83.154.138/32" accept
     state: enabled
     permanent: yes
     immediate: true
@@ -87,9 +89,14 @@
 - name: Allow Bareos IP & PORTS through firewalld
   become: yes
   become_user: root
-  firewalld:
+  ansible.posix.firewalld:
     zone: "public"
-    rich_rule: 'rule family="ipv4" source address="212.83.154.138/32" port port="9101-9103" protocol="tcp" accept'
+    port: "{{ item }}"
+    loop:
+      - 9101
+      - 9102
+      - 9103
+      - 5666
     state: enabled
     permanent: yes
     immediate: true
