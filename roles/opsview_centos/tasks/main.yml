@@ -1,36 +1,17 @@
 ---
-- name: Check if cpanel service is installed
-  command: "systemctl is-active cpanel.service"
-  ignore_errors: true
-  register: cpanel_status
-
-- name: Install CSF if cpanel is installed
-  when: cpanel_status.rc == 0
-  block:
-    - name: Download CSF archive
-      get_url:
-        url: "https://download.configserver.com/csf.tgz"
-        dest: "/tmp/csf.tgz"
-
-    - name: Untar CSF archive
-      ansible.builtin.unarchive:
-        src: "/tmp/csf.tgz"
-        dest: "/tmp/"
-        remote_src: yes
-
-    - name: Change to CSF directory and install CSF
-      become: yes
-      become_user: root
-      command:
-        cmd: "bash install.sh"
-        chdir: "/tmp/csf"
+- name: Install epel-release prerequisite for vnstat package
+  become: yes
+  become_user: root
+  yum:
+    name:
+      - epel-release
+    state: present
 
 - name: Install Opsview dependencies
   become: yes
   become_user: root
   yum:
     name:
-      - epel-release
       - wget
       - rpcbind
       - perl
@@ -96,19 +77,40 @@
   become: yes
   become_user: root
   ansible.posix.firewalld:
-    rich_rule:
-      - 'rule family="ipv4" source address="94.75.230.111/32" port port="5666" protocol="tcp" accept'
+    zone: public
+    source: 94.75.230.111
     state: enabled
-    permanent: yes
+    permanent: true
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
-- name: Allow Bareos IP & PORTS through firewalld
+- name: Allow Opsview Ports through firewalld
   become: yes
   become_user: root
   ansible.posix.firewalld:
-    rich_rule: 'rule family="ipv4" source address="212.83.154.138/32" port port="9101-9103" protocol="tcp" accept'
+    zone: public
+    port: 5666/tcp
     state: enabled
-    permanent: yes
+    permanent: true
+  when: ansible_facts.services['firewalld.service']['status'] != 'masked'
+
+- name: Allow Bareos IP and PORTS through firewalld
+  become: yes
+  become_user: root
+  ansible.posix.firewalld:
+    zone: public
+    source: 212.83.154.138
+    state: enabled
+    permanent: true
+  when: ansible_facts.services['firewalld.service']['status'] != 'masked'
+
+- name: Allow Bareos Ports through firewalld
+  become: yes
+  become_user: root
+  ansible.posix.firewalld:
+    zone: public
+    port: 9101-9103/tcp
+    state: enabled
+    permanent: true
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
 - name: Reload firewalld-service to apply the changes
