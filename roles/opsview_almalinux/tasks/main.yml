@@ -1,5 +1,5 @@
 ---
-- name: Install epel-release prerequisite for vnstat package
+- name: Install 'EPEL-Release' prerequisite for vnstat package
   become: yes
   become_user: root
   yum:
@@ -7,7 +7,7 @@
       - epel-release
     state: present
 
-- name: Install Opsview dependencies
+- name: Install 'Opsview' dependencies
   become: yes
   become_user: root
   yum:
@@ -20,7 +20,7 @@
       - vnstat
     state: present
 
-- name: Check If Opsview already downloaded or not
+- name: Check If 'Opsview' already downloaded or not
   become: yes
   become_user: root
   stat:
@@ -35,21 +35,21 @@
     dest: /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
   when: not file_exist.stat.exists
 
-- name: Ensure the Opsview-user is created
+- name: Ensure the 'Opsview-User' is created
   become: yes
   become_user: root
   user:
     name: opsview
     state: present
 
-- name: Install Opsview RPM package
+- name: Install 'Opsview' RPM package
   become: yes
   become_user: root
   command: rpm -i /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
   args:
     creates: /opt/opsview/agent
 
-- name: Start Opsview Agent
+- name: Start 'Opsview' Agent
   become: yes
   become_user: root
   service:
@@ -57,14 +57,14 @@
     state: started
     enabled: yes
 
-- name: Get the status of the firewalld service
+- name: Get the status of the 'FirewallD' service
   service_facts:
 
 - name: Show the status of firewalld service
   debug:
     var: ansible_facts.services['firewalld.service']['status']
 
-- name: Ensure firewalld service is running
+- name: Ensure 'FirewallD' service is running
   become: yes
   become_user: root
   service:
@@ -73,7 +73,7 @@
     enabled: yes
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
-- name: Allow Opsview IP through firewalld
+- name: Allow 'Opsview' IP through FirewallD
   become: yes
   become_user: root
   ansible.posix.firewalld:
@@ -83,7 +83,7 @@
     permanent: true
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
-- name: Allow Opsview Ports through firewalld
+- name: Allow 'Opsview' Ports through FirewallD
   become: yes
   become_user: root
   ansible.posix.firewalld:
@@ -93,7 +93,7 @@
     permanent: true
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
-- name: Allow Bareos IP and PORTS through firewalld
+- name: Allow 'Bareos' IP and PORTS through FirewallD
   become: yes
   become_user: root
   ansible.posix.firewalld:
@@ -103,7 +103,7 @@
     permanent: true
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
-- name: Allow Bareos Ports through firewalld
+- name: Allow 'Bareos' Ports through FirewallD
   become: yes
   become_user: root
   ansible.posix.firewalld:
@@ -113,7 +113,7 @@
     permanent: true
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
-- name: Reload firewalld-service to apply the changes
+- name: Reload 'FirewallD' service to apply the changes
   become: yes
   become_user: root
   command: firewall-cmd --reload
@@ -121,19 +121,19 @@
   poll: 0
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
-- name: Add Opsview Ip address in csf.allow file
+- name: Add Opsview Ip address in 'csf.allow' file
   become: yes
   become_user: root
   command: csf -a 94.75.230.111 opsview-server
   when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
-- name: Add Bareos Ip address in csf.allow file
+- name: Add Bareos Ip address in 'csf.allow' file
   become: yes
   become_user: root
   command: csf -a 212.83.154.138 bareos-backup-service
   when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
-- name: Add allowed ports in csf.conf file
+- name: Add allowed ports in 'csf.conf' file
   become: yes
   become_user: root
   lineinfile:
@@ -149,7 +149,7 @@
   command: csf -r
   when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
-- name: Add special permissions to sudoers file
+- name: Add special permissions to 'Sudoers' file
   become: yes
   become_user: root
   blockinfile:
@@ -164,14 +164,14 @@
       opsview ALL=NOPASSWD:/opt/opsview/agent/plugins/check_disk
     create: yes
 
-- name: Copy the NRPE configuration file
+- name: Copy the 'NRPE' configuration file
   become: yes
   become_user: root
   copy:
     src: ../../../nrpe.cfg
     dest: /opt/opsview/agent/etc/nrpe.cfg
 
-- name: Copy the check_bandwidth_quota file
+- name: Copy the 'check_bandwidth_quota' file
   become: yes
   become_user: root
   copy:
@@ -180,7 +180,7 @@
     group: opsview
     mode: "0750"
 
-- name: Copy the check_csf file
+- name: Copy the 'check_csf' file
   become: yes
   become_user: root
   copy:
@@ -189,7 +189,7 @@
     group: opsview
     mode: "0750"
 
-- name: Copy the check_eximmailqueue file
+- name: Copy the 'check_eximmailqueue' file
   become: yes
   become_user: root
   copy:
@@ -198,14 +198,14 @@
     group: opsview
     mode: "0750"
 
-- name: Ensure the vnstat service is restarted
+- name: Ensure the 'Vnstat' service is restarted
   become: yes
   become_user: root
   systemd:
     name: vnstat
     state: restarted
 
-- name: Ensure the opsview service is restarted
+- name: Ensure the 'Opsview' service is restarted
   become: yes
   become_user: root
   systemd:
