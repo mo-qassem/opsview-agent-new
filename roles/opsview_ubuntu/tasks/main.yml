@@ -4,26 +4,26 @@
   ignore_errors: true
   register: cpanel_status
 
-- name: Install CSF if cpanel is installed
+- name: Download CSF archive
+  get_url:
+    url: "https://download.configserver.com/csf.tgz"
+    dest: "/tmp/csf.tgz"
   when: cpanel_status.rc == 0
-  block:
-    - name: Download CSF archive
-      get_url:
-        url: "https://download.configserver.com/csf.tgz"
-        dest: "/tmp/csf.tgz"
 
-    - name: Untar CSF archive
-      ansible.builtin.unarchive:
-        src: "/tmp/csf.tgz"
-        dest: "/tmp/"
-        remote_src: yes
+- name: Untar CSF archive
+  ansible.builtin.unarchive:
+    src: "/tmp/csf.tgz"
+    dest: "/tmp/"
+    remote_src: yes
+  when: cpanel_status.rc == 0
 
-    - name: Change to CSF directory and install CSF
-      become: yes
-      become_user: root
-      command:
-        cmd: "bash install.sh"
-        chdir: "/tmp/csf"
+- name: Change to CSF directory and install CSF
+  become: yes
+  become_user: root
+  command:
+    cmd: "bash install.sh"
+    chdir: "/tmp/csf"
+  when: cpanel_status.rc == 0
 
 - name: Install Opsview dependencies
   become: yes
