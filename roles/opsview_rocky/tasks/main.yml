@@ -2,9 +2,9 @@
 - name: Check if the Opsview is installed
   become: yes
   become_user: root
-    stat:
-      path: "/usr/local/nagios"
-    register: opsview_status
+  stat:
+    path: "/usr/local/nagios"
+  register: opsview_status
 
 - name: Remove the Opsview if installed
   become: yes
