@@ -1,4 +1,19 @@
 ---
+- name: Check if the Opsview is installed
+  become: yes
+  become_user: root
+    stat:
+      path: "/usr/local/nagios"
+    register: opsview_status
+
+- name: Remove the Opsview if installed
+  become: yes
+  become_user: root
+  package:
+    name: opsview-agent
+    state: absent
+  when: opsview_status.stat.exists
+
 - name: Install 'epel-release' prerequisite for vnstat package
   become: yes
   become_user: root
