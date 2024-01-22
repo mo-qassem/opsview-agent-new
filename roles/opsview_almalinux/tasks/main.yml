@@ -174,6 +174,16 @@
   command: csf -a 212.83.154.138 bareos-backup-service
   when: ansible_facts.services['firewalld.service']['status'] == 'masked'
 
+- name: Change 'lfd will not start while this is enabled' in csf.conf file
+  become: yes
+  become_user: root
+  lineinfile:
+    path: /etc/csf/csf.conf
+    regexp: '^TESTING = "1"'
+    line: 'TESTING = "0"'
+    create: yes
+  when: ansible_facts.services['firewalld.service']['status'] == 'masked'
+
 - name: Add allowed ports in 'csf.conf' file
   become: yes
   become_user: root
