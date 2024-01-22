@@ -1,4 +1,30 @@
 ---
+- name: Check if cpanel service is installed
+  command: "systemctl is-active cpanel"
+  ignore_errors: true
+  register: cpanel_status
+
+- name: Download CSF archive
+  get_url:
+    url: "https://download.configserver.com/csf.tgz"
+    dest: "/tmp/csf.tgz"
+  when: cpanel_status.rc == 0
+
+- name: Untar CSF archive
+  ansible.builtin.unarchive:
+    src: "/tmp/csf.tgz"
+    dest: "/tmp/"
+    remote_src: yes
+  when: cpanel_status.rc == 0
+
+- name: Change to CSF directory and install CSF
+  become: yes
+  become_user: root
+  command:
+    cmd: "bash install.sh"
+    chdir: "/tmp/csf"
+  when: cpanel_status.rc == 0
+
 - name: Check if the Opsview is installed
   become: yes
   become_user: root
