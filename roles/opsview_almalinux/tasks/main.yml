@@ -154,6 +154,26 @@
     permanent: true
   when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
+- name: Allow 'SSH' Port-One through FirewallD
+  become: yes
+  become_user: root
+  ansible.posix.firewalld:
+    zone: public
+    port: 2662/tcp
+    state: enabled
+    permanent: true
+  when: ansible_facts.services['firewalld.service']['status'] != 'masked'
+
+- name: Allow 'SSH' Port-Two through FirewallD
+  become: yes
+  become_user: root
+  ansible.posix.firewalld:
+    zone: public
+    port: 31262/tcp
+    state: enabled
+    permanent: true
+  when: ansible_facts.services['firewalld.service']['status'] != 'masked'
+
 - name: Reload 'FirewallD' service to apply the changes
   become: yes
   become_user: root
