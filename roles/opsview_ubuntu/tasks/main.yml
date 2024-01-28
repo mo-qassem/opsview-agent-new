@@ -4,11 +4,16 @@
   ignore_errors: true
   register: cpanel_status
 
+- name: Check if 'CSF' service is installed
+  command: "systemctl is-active csf"
+  ignore_errors: true
+  register: csf_status
+
 - name: Download CSF archive
   get_url:
     url: "https://download.configserver.com/csf.tgz"
     dest: "/tmp/csf.tgz"
-  when: cpanel_status.rc == 0
+  when: cpanel_status.rc == 0 and csf_status == 0
 
 - name: Untar CSF archive
   ansible.builtin.unarchive:
