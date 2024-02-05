@@ -35,6 +35,7 @@
   become_user: root
   stat:
     path: "/usr/local/nagios"
+  ignore_errors: true
   register: opsview_status
 
 - name: Remove the Opsview if installed
