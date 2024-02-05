@@ -1,0 +1,11 @@
+#!/bin/bash
+
+dhcp_status=$(systemctl is-active isc-dhcp-server.service)
+
+if [ "$dhcp_status" = "active" ]; then
+        echo "OK - DHCP Service is running."
+        exit 0
+  else
+        echo "CRITICAL - DHCP Servcie is not running."
+        exit 2
+fi

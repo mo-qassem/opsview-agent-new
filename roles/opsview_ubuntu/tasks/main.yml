@@ -13,14 +13,14 @@
   get_url:
     url: "https://download.configserver.com/csf.tgz"
     dest: "/tmp/csf.tgz"
-  when: cpanel_status.rc == 0 and csf_status == 0
+  when: cpanel_status.rc == 0 and csf_status.rc == 0
 
 - name: Untar CSF archive
   ansible.builtin.unarchive:
     src: "/tmp/csf.tgz"
     dest: "/tmp/"
     remote_src: yes
-  when: cpanel_status.rc == 0
+  when: cpanel_status.rc == 0 and csf_status.rc == 0
 
 - name: Change to CSF directory and install CSF
   become: yes
@@ -28,7 +28,22 @@
   command:
     cmd: "bash install.sh"
     chdir: "/tmp/csf"
-  when: cpanel_status.rc == 0
+  when: cpanel_status.rc == 0 and csf_status.rc == 0
+
+- name: Check if the Opsview is installed
+  become: yes
+  become_user: root
+  stat:
+    path: "/usr/local/nagios"
+  register: opsview_status
+
+- name: Remove the Opsview if installed
+  become: yes
+  become_user: root
+  package:
+    name: opsview-agent
+    state: absent
+  when: opsview_status.stat.exists
 
 - name: Install Opsview dependencies
   become: yes
@@ -147,6 +162,24 @@
   become_user: root
   copy:
     src: ../../../plugins/check_eximmailqueue
+    dest: /opt/opsview/agent/plugins
+    group: opsview
+    mode: "0750"
+
+- name: Copy the check_dhcp file
+  become: yes
+  become_user: root
+  copy:
+    src: ../../../plugins/check_dhcp
+    dest: /opt/opsview/agent/plugins
+    group: opsview
+    mode: "0750"
+
+- name: Copy the check_raid file
+  become: yes
+  become_user: root
+  copy:
+    src: ../../../plugins/check_raid.pl
     dest: /opt/opsview/agent/plugins
     group: opsview
     mode: "0750"
