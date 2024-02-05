@@ -30,22 +30,6 @@
     chdir: "/tmp/csf"
   when: cpanel_status.rc == 0 and csf_status.rc == 0
 
-- name: Check if the Opsview is installed
-  become: yes
-  become_user: root
-  stat:
-    path: "/usr/local/nagios"
-  ignore_errors: true
-  register: opsview_status
-
-- name: Remove the Opsview if installed
-  become: yes
-  become_user: root
-  package:
-    name: opsview-agent
-    state: absent
-  when: opsview_status.stat.exists
-
 - name: Install Opsview dependencies
   become: yes
   become_user: root
