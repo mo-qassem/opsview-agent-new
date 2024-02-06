@@ -51,13 +51,13 @@
   become_user: root
   get_url:
     url: https://opsview-repository.s3-eu-west-1.amazonaws.com/opsview-agents/debian10/opsview-agent_6.8.0.202212070943-1buster1_amd64.deb
-    dest: /root/opsview-agent_6.8.0.202212070943-1focal1_amd64.deb
+    dest: /root/opsview-agent_6.8.0.202212070943-1buster1_amd64.deb
   when: not file_exist.stat.exists
 
 - name: Install Opsview DEB package
   become: yes
   become_user: root
-  command: dpkg -i /root/opsview-agent_6.8.0.202212070943-1focal1_amd64.deb
+  command: dpkg -i /root/opsview-agent_6.8.0.202212070943-1buster1_amd64.deb
   args:
     creates: /opt/opsview/agent
 
