@@ -127,14 +127,14 @@
   become_user: root
   copy:
     src: ../../../nrpe.cfg
-    dest: /opt/opsview/agent/etc/nrpe.cfg
+    dest: /usr/local/nagios/etc/nrpe.cfg
 
 - name: Copy the check_bandwidth_quota file
   become: yes
   become_user: root
   copy:
     src: ../../../plugins/check_bandwidth_quota.sh
-    dest: /opt/opsview/agent/plugins
+    dest: /usr/local/nagios/libexec
     group: opsview
     mode: "0750"
 
@@ -143,7 +143,7 @@
   become_user: root
   copy:
     src: ../../../plugins/check_csf
-    dest: /opt/opsview/agent/plugins
+    dest: /usr/local/nagios/libexec
     group: opsview
     mode: "0750"
 
@@ -152,7 +152,7 @@
   become_user: root
   copy:
     src: ../../../plugins/check_eximmailqueue
-    dest: /opt/opsview/agent/plugins
+    dest: /usr/local/nagios/libexec
     group: opsview
     mode: "0750"
 
@@ -161,7 +161,7 @@
   become_user: root
   copy:
     src: ../../../plugins/check_dhcp
-    dest: /opt/opsview/agent/plugins
+    dest: /usr/local/nagios/libexec
     group: opsview
     mode: "0750"
 
@@ -170,7 +170,7 @@
   become_user: root
   copy:
     src: ../../../plugins/check_raid.pl
-    dest: /opt/opsview/agent/plugins
+    dest: /usr/local/nagios/libexec
     group: opsview
     mode: "0750"
 
