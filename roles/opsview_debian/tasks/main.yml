@@ -37,35 +37,14 @@
     name:
       - wget
       - vnstat
+      - nagios-nrpe-server
     state: present
 
-- name: Check If Opsview already downloaded or not
-  become: yes
-  become_user: root
-  stat:
-    path: /root/opsview-agent_6.8.0.202212070943-1focal1_amd64.deb
-  register: file_exist
-
-- name: Download the package if it is not exist
-  become: yes
-  become_user: root
-  get_url:
-    url: https://opsview-repository.s3-eu-west-1.amazonaws.com/opsview-agents/debian10/opsview-agent_6.8.0.202212070943-1buster1_amd64.deb
-    dest: /root/opsview-agent_6.8.0.202212070943-1buster1_amd64.deb
-  when: not file_exist.stat.exists
-
-- name: Install Opsview DEB package
-  become: yes
-  become_user: root
-  command: dpkg -i /root/opsview-agent_6.8.0.202212070943-1buster1_amd64.deb
-  args:
-    creates: /opt/opsview/agent
-
-- name: Start Opsview Agent
+- name: Start Nagios Agent
   become: yes
   become_user: root
   service:
-    name: opsview-agent
+    name: nagios-nrpe-server
     state: started
     enabled: yes
 
@@ -114,12 +93,12 @@
     path: /etc/sudoers
     insertafter: "^# Allow members of group sudo to execute any command"
     block: |
-      opsview ALL=NOPASSWD:/usr/sbin/csf
-      opsview ALL=NOPASSWD:/usr/sbin/exim
-      opsview ALL=NOPASSWD:/usr/sbin/lfd
-      opsview ALL=NOPASSWD:/usr/bin/omreport
-      opsview ALL=NOPASSWD:/opt/opsview/agent/plugins/check_tcp
-      opsview ALL=NOPASSWD:/opt/opsview/agent/plugins/check_disk
+      nagios ALL=NOPASSWD:/usr/sbin/csf
+      nagios ALL=NOPASSWD:/usr/sbin/exim
+      nagios ALL=NOPASSWD:/usr/sbin/lfd
+      nagios ALL=NOPASSWD:/usr/bin/omreport
+      nagios ALL=NOPASSWD:/usr/lib/nagios/plugins/check_tcp
+      nagios ALL=NOPASSWD:/usr/lib/nagios/plugins/check_disk
     create: yes
 
 - name: Copy the NRPE configuration file
@@ -127,14 +106,14 @@
   become_user: root
   copy:
     src: ../../../nrpe.cfg
-    dest: /opt/opsview/agent/etc/nrpe.cfg
+    dest: /etc/nagios/nrpe.cfg
 
 - name: Copy the check_bandwidth_quota file
   become: yes
   become_user: root
   copy:
     src: ../../../plugins/check_bandwidth_quota.sh
-    dest: /opt/opsview/agent/plugins
+    dest: /usr/lib/nagios/plugins
     group: opsview
     mode: "0750"
 
@@ -143,7 +122,7 @@
   become_user: root
   copy:
     src: ../../../plugins/check_csf
-    dest: /opt/opsview/agent/plugins
+    dest: /usr/lib/nagios/plugins
     group: opsview
     mode: "0750"
 
@@ -152,7 +131,7 @@
   become_user: root
   copy:
     src: ../../../plugins/check_eximmailqueue
-    dest: /opt/opsview/agent/plugins
+    dest: /usr/lib/nagios/plugins
     group: opsview
     mode: "0750"
 
@@ -161,7 +140,7 @@
   become_user: root
   copy:
     src: ../../../plugins/check_dhcp
-    dest: /opt/opsview/agent/plugins
+    dest: /usr/lib/nagios/plugins
     group: opsview
     mode: "0750"
 
@@ -170,7 +149,7 @@
   become_user: root
   copy:
     src: ../../../plugins/check_raid.pl
-    dest: /opt/opsview/agent/plugins
+    dest: /usr/lib/nagios/plugins
     group: opsview
     mode: "0750"
 
