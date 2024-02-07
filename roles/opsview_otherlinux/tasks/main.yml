@@ -42,7 +42,8 @@
       - ksh
       - vnstat
     state: present
-  use_backend: yum
+  vars:
+    use_backend: dnf
 
 - name: Check If 'Opsview' already downloaded or not
   become: yes
