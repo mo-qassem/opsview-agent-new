@@ -33,7 +33,7 @@
 - name: Install 'epel-release' prerequisite for vnstat package
   become: yes
   become_user: root
-  yum:
+  dnf:
     name:
       - epel-release
     state: present
@@ -41,7 +41,7 @@
 - name: Install 'Opsview' dependencies
   become: yes
   become_user: root
-  yum:
+  dnf:
     name:
       - wget
       - rpcbind
