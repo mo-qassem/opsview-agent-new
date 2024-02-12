@@ -13,14 +13,14 @@
   get_url:
     url: "https://download.configserver.com/csf.tgz"
     dest: "/tmp/csf.tgz"
-  when: cpanel_status.rc == 0 and csf_status.rc == 0
+  when: cpanel_status.rc == 0 and csf_status.rc != 0
 
 - name: Untar CSF archive
   ansible.builtin.unarchive:
     src: "/tmp/csf.tgz"
     dest: "/tmp/"
     remote_src: yes
-  when: cpanel_status.rc == 0 and csf_status.rc == 0
+  when: cpanel_status.rc == 0 and csf_status.rc != 0
 
 - name: Change to CSF directory and install CSF
   become: yes
@@ -28,7 +28,7 @@
   command:
     cmd: "bash install.sh"
     chdir: "/tmp/csf"
-  when: cpanel_status.rc == 0 and csf_status.rc == 0
+  when: cpanel_status.rc == 0 and csf_status.rc != 0
 
 - name: Install Opsview dependencies
   become: yes
@@ -37,14 +37,35 @@
     name:
       - wget
       - vnstat
-      - nagios-nrpe-server
     state: present
 
-- name: Start Nagios Agent
+- name: Check If Opsview already downloaded or not
+  become: yes
+  become_user: root
+  stat:
+    path: /root/opsview-agent_6.8.0.202212070943-1buster1_amd64.deb
+  register: file_exist
+
+- name: Download the package if it is not exist
+  become: yes
+  become_user: root
+  get_url:
+    url: https://opsview-repository.s3-eu-west-1.amazonaws.com/opsview-agents/debian10/opsview-agent_6.8.0.202212070943-1buster1_amd64.deb
+    dest: /root/opsview-agent_6.8.0.202212070943-1buster1_amd64.deb
+  when: not file_exist.stat.exists
+
+- name: Install Opsview DEB package
+  become: yes
+  become_user: root
+  command: dpkg -i /root/opsview-agent_6.8.0.202212070943-1buster1_amd64.deb
+  args:
+    creates: /opt/opsview/agent
+
+- name: Start Opsview Agent
   become: yes
   become_user: root
   service:
-    name: nagios-nrpe-server
+    name: opsview-agent
     state: started
     enabled: yes
 
@@ -93,12 +114,13 @@
     path: /etc/sudoers
     insertafter: "^# Allow members of group sudo to execute any command"
     block: |
-      nagios ALL=NOPASSWD:/usr/sbin/csf
-      nagios ALL=NOPASSWD:/usr/sbin/exim
-      nagios ALL=NOPASSWD:/usr/sbin/lfd
-      nagios ALL=NOPASSWD:/usr/bin/omreport
-      nagios ALL=NOPASSWD:/usr/lib/nagios/plugins/check_tcp
-      nagios ALL=NOPASSWD:/usr/lib/nagios/plugins/check_disk
+      opsview ALL=NOPASSWD:/usr/sbin/csf
+      opsview ALL=NOPASSWD:/usr/sbin/exim
+      opsview ALL=NOPASSWD:/usr/sbin/lfd
+      opsview ALL=NOPASSWD:/usr/bin/omreport
+      opsview ALL=NOPASSWD:/usr/lib/nagios/plugins/check_tcp
+      opsview ALL=NOPASSWD:/usr/lib/nagios/plugins/check_disk
+      opsview ALL=NOPASSWD:/opt/MegaRAID/MegaCli/MegaCli64
     create: yes
 
 - name: Copy the NRPE configuration file
@@ -106,14 +128,14 @@
   become_user: root
   copy:
     src: ../../../nrpe.cfg
-    dest: /etc/nagios/nrpe.cfg
+    dest: /opt/opsview/agent/etc/nrpe.cfg
 
 - name: Copy the check_bandwidth_quota file
   become: yes
   become_user: root
   copy:
     src: ../../../plugins/check_bandwidth_quota.sh
-    dest: /usr/lib/nagios/plugins
+    dest: /opt/opsview/agent/plugins
     group: opsview
     mode: "0750"
 
@@ -122,7 +144,7 @@
   become_user: root
   copy:
     src: ../../../plugins/check_csf
-    dest: /usr/lib/nagios/plugins
+    dest: /opt/opsview/agent/plugins
     group: opsview
     mode: "0750"
 
@@ -131,7 +153,7 @@
   become_user: root
   copy:
     src: ../../../plugins/check_eximmailqueue
-    dest: /usr/lib/nagios/plugins
+    dest: /opt/opsview/agent/plugins
     group: opsview
     mode: "0750"
 
@@ -140,7 +162,7 @@
   become_user: root
   copy:
     src: ../../../plugins/check_dhcp
-    dest: /usr/lib/nagios/plugins
+    dest: /opt/opsview/agent/plugins
     group: opsview
     mode: "0750"
 
@@ -149,7 +171,7 @@
   become_user: root
   copy:
     src: ../../../plugins/check_raid.pl
-    dest: /usr/lib/nagios/plugins
+    dest: /opt/opsview/agent/plugins
     group: opsview
     mode: "0750"
 
