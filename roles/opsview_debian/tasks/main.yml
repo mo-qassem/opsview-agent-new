@@ -35,8 +35,10 @@
   become_user: root
   apt:
     name:
+      - sudo
       - wget
       - vnstat
+      - python-apt
     state: present
 
 - name: Check If Opsview already downloaded or not
