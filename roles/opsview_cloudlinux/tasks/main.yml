@@ -33,7 +33,7 @@
 - name: Install 'Opsview' dependencies
   become: yes
   become_user: root
-  yum:
+  package:
     name:
       - wget
       - rpcbind
@@ -42,8 +42,6 @@
       - ksh
       - vnstat
     state: present
-  vars:
-    use_backend: dnf
 
 - name: Check If 'Opsview' already downloaded or not
   become: yes
