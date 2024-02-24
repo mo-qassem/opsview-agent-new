@@ -43,7 +43,8 @@
       - vnstat
     state: present
   vars:
-    use_backend: yum
+    ansible_become: yes
+    use_backend: "{{ use_backend }}"
 
 - name: Check If 'Opsview' already downloaded or not
   become: yes
