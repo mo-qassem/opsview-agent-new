@@ -42,9 +42,7 @@
       - ksh
       - vnstat
     state: present
-  vars:
-    ansible_become: yes
-    use_backend: "{{ use_backend }}"
+    use_backend: yum
 
 - name: Check If 'Opsview' already downloaded or not
   become: yes
