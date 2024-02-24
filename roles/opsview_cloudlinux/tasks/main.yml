@@ -85,7 +85,7 @@
 
 - name: Show the status of firewalld service
   debug:
-    var: ansible_facts.services['firewalld.service']['status']
+    var: services_state.ansible_facts.services['firewalld.service']['status']
 
 - name: Ensure 'FirewallD' service is running
   become: yes
