@@ -85,7 +85,7 @@
 
 - name: Show the status of firewalld service
   debug:
-    var: services_state.ansible_facts.services['firewalld.service']['status']
+    var: ansible_facts.services_state['firewalld.service']['status']
 
 - name: Ensure 'FirewallD' service is running
   become: yes
@@ -94,7 +94,7 @@
     name: firewalld
     state: started
     enabled: yes
-  when: services_state.ansible_facts.services['firewalld.service']['status'] != 'masked'
+  when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
 - name: Allow 'Opsview' IP through FirewallD
   become: yes
@@ -104,7 +104,7 @@
     source: 94.75.230.111/32
     state: enabled
     permanent: true
-  when: services_state.ansible_facts.services['firewalld.service']['status'] != 'masked'
+  when: ansible_facts.services['firewalld.service']['status'] != 'masked'
 
 - name: Allow 'Opsview' Ports through FirewallD
   become: yes
