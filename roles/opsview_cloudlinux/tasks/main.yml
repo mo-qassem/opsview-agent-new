@@ -80,16 +80,6 @@
     state: started
     enabled: yes
 
-- name: Get the status of the 'firewalld' service
-  systemd:
-    name: firewalld
-    state: status
-  register: firewalld_status
-
-- name: Show the status of firewalld service
-  debug:
-    var: firewalld_status
-
 - name: Get the status of the 'FirewallD' service
   service_facts:
 
