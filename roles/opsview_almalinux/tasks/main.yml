@@ -51,6 +51,11 @@
       - vnstat
     state: present
 
+- name: Get AlmaLinux version
+  shell: cat /etc/redhat-release
+  register: alma_version
+  changed_when: false
+
 - name: Check If 'Opsview' already downloaded or not
   become: yes
   become_user: root
@@ -87,6 +92,13 @@
     name: opsview-agent
     state: started
     enabled: yes
+  when:
+    - alma_major_version == '8'
+
+- name: Start Opsview Agent using init.d (AlmaLinux 9)
+  command: /etc/init.d/opsview-agent start
+  when:
+    - alma_major_version == '9'
 
 - name: Get the status of the 'FirewallD' service
   service_facts:

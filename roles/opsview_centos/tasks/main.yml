@@ -62,7 +62,7 @@
   become: yes
   become_user: root
   get_url:
-    url: https://opsview-repository.s3-eu-west-1.amazonaws.com/opsview-agents/centos8/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
+    url: https://opsview-repository.s3-eu-west-1.amazonaws.com/opsview-agents/centos7/opsview-agent-6.8.0.202212070943-1.ct7.x86_64.rpm
     dest: /root/opsview-agent-6.8.0.202212070943-1.el8.x86_64.rpm
   when: not file_exist.stat.exists
 
