@@ -52,7 +52,7 @@
     state: present
 
 - name: Get AlmaLinux version
-  shell: cat /etc/redhat-release
+  shell: cat /etc/redhat-release | awk '{print $3}' | cut -d '.' -f 1
   register: alma_version
   changed_when: false
 
@@ -93,12 +93,12 @@
     state: started
     enabled: yes
   when:
-    - alma_major_version == '8'
+    - alma_version == '8'
 
 - name: Start Opsview Agent using init.d (AlmaLinux 9)
   command: /etc/init.d/opsview-agent start
   when:
-    - alma_major_version == '9'
+    - alma_version == '9'
 
 - name: Get the status of the 'FirewallD' service
   service_facts:
