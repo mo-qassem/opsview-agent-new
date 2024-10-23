@@ -199,7 +199,29 @@ command_timeout=60
 # to match the argument format the plugins expect.  Remember, these are
 # examples only!
 
-# Exahost Standard Checks - Deployed by Ansible 
+# Anonymous ciphers
+#ciphers=aNULL:!3DES:!RC4:!SEED:!CAMELLIA:!EXP:!LOW:!DES:!MD5:!PSK:!SRP:!DSS:!eNULL:@STRENGTH:@SECLEVEL=0
+
+# Authenticated ciphers
+#ciphers=HIGH:!3DES:!CAMELLIA:!AES128:!aNULL:!eNULL:!ADH:!EXP:!LOW:!DES:!MD5:!PSK:!SRP:!DSS:@STRENGTH
+
+# Allowed protocols
+#protocols=!TLSv1:!SSLv2:!SSLv3
+
+# Path to CA certificate
+#cacert_file=
+
+# Path to (server) certificate
+#cert_file=
+
+# Path to (server) private key
+#privatekey_file=
+
+# NOTE: additional command definitions should be put into a file such as
+# 	/opt/opsview/agent/etc/nrpe_local/override.cfg
+include_dir=/opt/opsview/agent/etc/nrpe_local
+
+##### Exahost Standard Checks - Deployed by Ansible #####
 
 command[check_users]=/opt/opsview/agent/plugins/check_users $ARG1$
 command[check_load]=/opt/opsview/agent/plugins/check_load $ARG1$
@@ -231,25 +253,3 @@ command[check_dhcp_service]=/usr/local/nagios/libexec/check_dhcp
 command[check_csf]=/opt/opsview/agent/plugins/check_csf
 command[check_bw]=/opt/opsview/agent/plugins/check_bandwidth_quota.sh
 command[check_opsview]=/opt/opsview/agent/plugins/check_opsview $ARG1$
-
-# Anonymous ciphers
-#ciphers=aNULL:!3DES:!RC4:!SEED:!CAMELLIA:!EXP:!LOW:!DES:!MD5:!PSK:!SRP:!DSS:!eNULL:@STRENGTH:@SECLEVEL=0
-
-# Authenticated ciphers
-#ciphers=HIGH:!3DES:!CAMELLIA:!AES128:!aNULL:!eNULL:!ADH:!EXP:!LOW:!DES:!MD5:!PSK:!SRP:!DSS:@STRENGTH
-
-# Allowed protocols
-#protocols=!TLSv1:!SSLv2:!SSLv3
-
-# Path to CA certificate
-#cacert_file=
-
-# Path to (server) certificate
-#cert_file=
-
-# Path to (server) private key
-#privatekey_file=
-
-# NOTE: additional command definitions should be put into a file such as
-# 	/opt/opsview/agent/etc/nrpe_local/override.cfg
-include_dir=/opt/opsview/agent/etc/nrpe_local

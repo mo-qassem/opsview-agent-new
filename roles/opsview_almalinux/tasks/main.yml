@@ -241,7 +241,8 @@
   become: yes
   become_user: root
   copy:
-    src: ../../../nrpe.cfg
+  template:
+    src: ../../../nrpe.cfg.j2
     dest: /opt/opsview/agent/etc/nrpe.cfg
 
 - name: Copy the 'check_bandwidth_quota' file
