@@ -1,18 +1,20 @@
 #!/bin/bash
-
 if [ -d /etc/csf ]; then
-    if [[ "$(sudo csf --status | grep DROP -c)" -gt 0 ]]; then
-        if [[ "$(ps aux | grep 'lfd' | grep -v grep | wc -l)" -eq 1 ]]; then
-                echo "CSF WARNING – CSF is running but LFD is stopped"
-                exit 1
-    fi
-        echo "CSF OK – Running"
-        exit 0
+
+    if systemctl is-active --quiet csf; then
+
+        if systemctl is-active --quiet lfd; then
+            echo "CSF OK: Running and LFD OK: Running"
+            exit 0
+        else
+            echo "CSF WARNING: CSF is running but LFD is stopped"
+            exit 1
+        fi
     else
-        echo “CSF CRITICAL – NOT Running”
+        echo "CSF CRITICAL: CSF NOT Running"
         exit 2
     fi
 else
-    echo “CSF CRITICAL – NOT installed”
+    echo "CSF CRITICAL: CSF NOT installed"
     exit 2
 fi

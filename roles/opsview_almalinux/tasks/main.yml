@@ -229,12 +229,12 @@
     path: /etc/sudoers
     insertafter: "^## Allows members of the users group to shutdown this system"
     block: |
-      opsview ALL=NOPASSWD:/usr/sbin/csf
       opsview ALL=NOPASSWD:/usr/sbin/exim
       opsview ALL=NOPASSWD:/usr/sbin/lfd
       opsview ALL=NOPASSWD:/usr/bin/omreport
       opsview ALL=NOPASSWD:/opt/opsview/agent/plugins/check_tcp
       opsview ALL=NOPASSWD:/opt/opsview/agent/plugins/check_disk
+      opsview ALL=NOPASSWD:/opt/opsview/agent/plugins/check_csf
     create: yes
 
 - name: Copy the 'NRPE' configuration file
