@@ -92,8 +92,8 @@
     name: opsview-agent
     state: started
     enabled: yes
-    when:
-      - rocky_version == '8'
+  when:
+    - rocky_version == '8'
 
 - name: Start Opsview Agent using init.d (Rocky 9)
   command: /etc/init.d/opsview-agent start
