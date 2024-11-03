@@ -52,7 +52,7 @@
     state: present
 
 - name: Get AlmaLinux version
-  shell: cat /etc/redhat-release | awk '{print $3}' | cut -d '.' -f 1
+  shell: cat /etc/redhat-release | awk '{print $4}' | cut -d '.' -f 1
   register: alma_version
   changed_when: false
 
