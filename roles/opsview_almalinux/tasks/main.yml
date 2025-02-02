@@ -284,3 +284,10 @@
   systemd:
     name: opsview-agent
     state: restarted
+  when:
+    - alma_version == '8'
+
+- name: Start Opsview Agent using init.d (AlmaLinux 9)
+  command: /etc/init.d/opsview-agent start
+  when:
+    - alma_version == '9'
